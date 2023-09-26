@@ -93,6 +93,10 @@ current_year = max(df_picks_current1.Year)
 df_picks_current2 = pd.DataFrame(df_picks_current1.loc[np.where(df_picks_current1["Year"]==current_year)]).reset_index(drop=True)
 current_week = max(df_picks_current2.Week)
 df_picks_current = pd.DataFrame(df_picks_current2.loc[np.where(df_picks_current2["Week"]==current_week)]).reset_index(drop=True)
+remaining_count = df_picks_current[df_picks_current["Mat Result"] ==""].shape[0]
+
+df_picks_different = df_picks_current[df_picks_current['Mat Pick'] != df_picks_current['Dad Pick']] 
+different_count = df_picks_different.shape[0]
 
 df_results_current = pd.DataFrame(df_picks_year2.loc[np.where(df_picks_year2["Year"]==current_year)]).reset_index(drop=True)
 
@@ -125,10 +129,10 @@ else:
    game_lead='game'
 
 if Dad_Wins>Mat_Wins:
-   picks_text = "Through {games} total games, Dave is ahead of Mat by {difference} {margin}. Dave's record is {wins_dad}-{losses_dad} ({pct_dad}) and Mat's is {wins_mat}/{losses_mat} ({pct_mat})." \
+   picks_text = "Through {games} total games, Dave is ahead of Mat by {difference} {margin}. Dave's record is {wins_dad}-{losses_dad} ({pct_dad}) and Mat's is {wins_mat}-{losses_mat} ({pct_mat})." \
    .format(games=week_games, difference=Dad_Wins-Mat_Wins, margin=game_lead,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct)
 elif Dad_Wins<Mat_Wins:
-   picks_text = "Through {games} total games, Mat leads Dave by {difference} {margin}. Mat's record is {wins_mat}-{losses_mat} ({pct_mat}) and Dave's is {wins_dad}/{losses_dad} ({pct_dad})." \
+   picks_text = "Through {games} total games, Mat leads Dave by {difference} {margin}. Mat's record is {wins_mat}-{losses_mat} ({pct_mat}) and Dave's is {wins_dad}-{losses_dad} ({pct_dad})." \
    .format(games=week_games, difference=Mat_Wins-Dad_Wins, margin=game_lead,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct)
 else:
    picks_text = "Through {games} total games, Mat and Dave are tied! They each have a record of {wins_mat}-{losses_mat} ({pct_mat})." \
@@ -297,10 +301,10 @@ Dad_Cards_Pct = round(df_cards_dad.iloc[0]['Pct'],3)
 
 
 if Dad_Cards_Wins>Mat_Cards_Wins:
-   cards_text = "Dave has a better win percentage in Cardinals games, with a record of {wins_dad}-{losses_dad} ({pct_dad}). Mat's record is {wins_mat}/{losses_mat} ({pct_mat})." \
+   cards_text = "Dave has a better win percentage in Cardinals games, with a record of {wins_dad}-{losses_dad} ({pct_dad}). Mat's record is {wins_mat}-{losses_mat} ({pct_mat})." \
    .format(wins_dad=Dad_Cards_Wins,losses_dad=Dad_Cards_Losses,pct_dad=Dad_Cards_Pct,wins_mat=Mat_Cards_Wins,losses_mat=Mat_Cards_Losses,pct_mat=Mat_Cards_Pct)
 elif Dad_Cards_Wins<Mat_Cards_Wins:
-   cards_text = "Mat leads Dave in picking Cardinals games. Mat's record is {wins_mat}-{losses_mat} ({pct_mat}) and Dave's is {wins_dad}/{losses_dad} ({pct_dad})." \
+   cards_text = "Mat leads Dave in picking Cardinals games. Mat's record is {wins_mat}-{losses_mat} ({pct_mat}) and Dave's is {wins_dad}-{losses_dad} ({pct_dad})." \
    .format(wins_mat=Mat_Cards_Wins,losses_mat=Mat_Cards_Losses,pct_mat=Mat_Cards_Pct,wins_dad=Dad_Cards_Wins,losses_dad=Dad_Cards_Losses,pct_dad=Dad_Cards_Pct)
 else:
    cards_text = "Mat and Dave are tied when picking Cardinals games! They each have a record of {wins_mat}-{losses_mat} ({pct_mat})." \
@@ -415,8 +419,10 @@ with tab1:
    st.header("Picks")
    st.write(picks_text)
    st.dataframe(df_results_current.style, hide_index=True)
-   st.write("Here are the picks for Week {week}.".format(week=current_week))
+   st.write("Here are the picks with {remaining} games left in Week {week}.".format(remaining=remaining_count,week=current_week))
    st.dataframe(df_picks_current.style, hide_index=True)
+   st.write("Dave and Mat picked {different} games differently in Week {week}.".format(different=different_count,week=current_week))
+   st.dataframe(df_picks_different.style, hide_index=True)
    st.write("See how the current win percentages compare to prior seasons.")
    st.plotly_chart(weekly_pct, theme=None)
    st.write("Compare overall winning percentages over the years.")
