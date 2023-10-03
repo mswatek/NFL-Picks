@@ -418,7 +418,7 @@ total_tally = total_tally.loc[:,['Year','Dave: Win Pct','Mat: Win Pct','Dave: OU
 with tab1:
    st.header("Picks")
    st.write(picks_text)
-   st.dataframe(df_results_current.style, hide_index=True)
+   st.dataframe(df_results_current, hide_index=True)
    st.write("Here are the picks with {remaining} games left in Week {week}.".format(remaining=remaining_count,week=current_week))
    st.dataframe(df_picks_current.style, hide_index=True)
    st.write("Dave and Mat picked {different} games differently in Week {week}.".format(different=different_count,week=current_week))
@@ -440,7 +440,7 @@ with tab3:
    st.write(cards_text)
    st.altair_chart(win_pct_cards, use_container_width=False)
    st.write("Here's a table of how the picks have gone for each NFL team.") # I NEED TO AUTOMATE THE TEXT FOR THIS
-   st.dataframe(df_teams_tally.style, hide_index=True)
+   st.dataframe(df_teams_tally, hide_index=True)
    st.plotly_chart(teams_mat, theme=None, use_container_width=True)
    st.plotly_chart(teams_dad, theme=None, use_container_width=True)
 
@@ -448,7 +448,7 @@ with tab3:
 with tab4:
    st.header("Tallies") # AUTOMATE TEXT HERE...also, should I just combine everything into one table?
    st.write("Below are the tallies for picks, over/unders, and cardinals games over the years.")
-   st.dataframe(total_tally.style, hide_index=True)
+   st.dataframe(total_tally, hide_index=True)
 
 with tab5:
    st.header("Full History")
