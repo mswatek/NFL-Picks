@@ -5,3 +5,4 @@ gspread
 numpy
 IPython
 plotly.express
+seaborn
