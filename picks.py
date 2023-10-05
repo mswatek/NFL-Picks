@@ -5,8 +5,14 @@ import numpy as np
 import altair as alt
 import IPython
 import plotly.express as px
+import seaborn as sns
 
 from google.oauth2.service_account import Credentials
+
+########################### TO DO LIST #################################
+#### more call-outs in various spots
+#### fix team scatterplots - dashed vertical and horizontal lines
+
 
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -130,13 +136,18 @@ else:
 
 if Dad_Wins>Mat_Wins:
    picks_text = "Through {games} total games, Dave is ahead of Mat by {difference} {margin}. Dave's record is {wins_dad}-{losses_dad} ({pct_dad}) and Mat's is {wins_mat}-{losses_mat} ({pct_mat})." \
-   .format(games=week_games, difference=Dad_Wins-Mat_Wins, margin=game_lead,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct)
+   .format(games=week_games, difference=format(Dad_Wins-Mat_Wins,',.0f'), margin=game_lead,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct)
 elif Dad_Wins<Mat_Wins:
    picks_text = "Through {games} total games, Mat leads Dave by {difference} {margin}. Mat's record is {wins_mat}-{losses_mat} ({pct_mat}) and Dave's is {wins_dad}-{losses_dad} ({pct_dad})." \
-   .format(games=week_games, difference=Mat_Wins-Dad_Wins, margin=game_lead,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct)
+   .format(games=week_games, difference=format(Mat_Wins-Dad_Wins,',.0f'), margin=game_lead,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct,wins_dad=Dad_Wins,losses_dad=Dad_Losses,pct_dad=Dad_Pct)
 else:
    picks_text = "Through {games} total games, Mat and Dave are tied! They each have a record of {wins_mat}-{losses_mat} ({pct_mat})." \
    .format(games=week_games,wins_mat=Mat_Wins,losses_mat=Mat_Losses,pct_mat=Mat_Pct)
+
+##format
+def color_result(val):
+    color = 'green' if val=='W' else 'white'
+    return f'background-color: {color}'
 
 
 ### bring in over/under tab
@@ -413,6 +424,17 @@ total_tally = pd.merge(total_tally1,cards_tally,  how='left', left_on=['Year'], 
 
 total_tally = total_tally.loc[:,['Year','Dave: Win Pct','Mat: Win Pct','Dave: OU Wins','Dave: OU Wins Original','Mat: OU Wins','Mat: OU Wins Original','Dave: Cards Win Pct','Mat: Cards Win Pct']]
 
+#color palette options
+cm_tally = sns.light_palette("green", as_cmap=True)
+
+##automated text
+dave_top_year = total_tally.loc[total_tally['Dave: Win Pct'] == total_tally['Dave: Win Pct'].max(), 'Year'].values[0]
+dave_top_pct = format(total_tally.loc[total_tally['Dave: Win Pct'] == total_tally['Dave: Win Pct'].max(), 'Dave: Win Pct'].values[0],'.3f')
+
+mat_top_year = total_tally.loc[total_tally['Mat: Win Pct'] == total_tally['Mat: Win Pct'].max(), 'Year'].values[0]
+mat_top_pct = format(total_tally.loc[total_tally['Mat: Win Pct'] == total_tally['Mat: Win Pct'].max(), 'Mat: Win Pct'].values[0],'.3f')
+
+
 ################################################ tabs #####################################################
    
 with tab1:
@@ -420,18 +442,20 @@ with tab1:
    st.write(picks_text)
    st.dataframe(df_results_current, hide_index=True)
    st.write("Here are the picks with {remaining} games left in Week {week}.".format(remaining=remaining_count,week=current_week))
-   st.dataframe(df_picks_current.style, hide_index=True)
+   st.dataframe(df_picks_current.style.applymap(color_result, subset=['Mat Result','Dad Result']), hide_index=True)
    st.write("Dave and Mat picked {different} games differently in Week {week}.".format(different=different_count,week=current_week))
-   st.dataframe(df_picks_different.style, hide_index=True)
-   st.write("See how the current win percentages compare to prior seasons.")
+   st.dataframe(df_picks_different.style.applymap(color_result, subset=['Mat Result','Dad Result']), hide_index=True)
+   st.write("See how the current win percentages stack up to prior seasons. For comparison, Mat's best overall season ",\
+             "({matpct}) was in {matyear} and Dave's ({davepct}) was in {daveyear}.".format(matpct=mat_top_pct,matyear=mat_top_year,davepct=dave_top_pct,daveyear=dave_top_year))
    st.plotly_chart(weekly_pct, theme=None)
    st.write("Compare overall winning percentages over the years.")
    st.altair_chart(win_pct, use_container_width=False)
 
+
 with tab2:
    st.header("Over/Under")
    st.write("Check out the Over/Under picks for {year}.".format(year=current_year))
-   st.dataframe(df_ou_current.style, hide_index=True)
+   st.dataframe(df_ou_current, hide_index=True)
    st.altair_chart(ou_new, use_container_width=False)
    st.altair_chart(ou_original, use_container_width=False)
 
@@ -447,8 +471,8 @@ with tab3:
 
 with tab4:
    st.header("Tallies") # AUTOMATE TEXT HERE...also, should I just combine everything into one table?
-   st.write("Below are the tallies for picks, over/unders, and cardinals games over the years.")
-   st.dataframe(total_tally, hide_index=True)
+   st.write("Below are the tallies for picks, over/unders, and Cardinals games over the years.")
+   st.dataframe(total_tally.style.background_gradient(cmap=cm_tally).highlight_null('white'),hide_index=True,use_container_width=True)
 
 with tab5:
    st.header("Full History")
