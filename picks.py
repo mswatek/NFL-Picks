@@ -12,7 +12,8 @@ from google.oauth2.service_account import Credentials
 ########################### TO DO LIST #################################
 #### more call-outs in various spots
 #### fix team scatterplots - dashed vertical and horizontal lines
-
+#### for comparison call-outs, need to filter out current season
+#### formatting on tallies table
 
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -31,6 +32,7 @@ url = st.secrets["private_gsheets_url"]
 # Uses st.cache_data to only rerun when the query changes or after 10 min.
 # @st.cache_data(ttl=600)
 
+st.set_page_config(page_title="NFL Picks")
 st.title("NFL Picks")
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Picks", "Over/Under","Teams", "Tallies", "Full History"])
@@ -105,6 +107,7 @@ df_picks_different = df_picks_current[df_picks_current['Mat Pick'] != df_picks_c
 different_count = df_picks_different.shape[0]
 
 df_results_current = pd.DataFrame(df_picks_year2.loc[np.where(df_picks_year2["Year"]==current_year)]).reset_index(drop=True)
+df_results_current['Year'] = df_results_current['Year'].astype('string')
 
 df_results_current_week1 = pd.DataFrame(df_picks_week3.loc[np.where(df_picks_week3["Year"]==current_year)]).reset_index()
 current_results_week = max(df_results_current_week1.Week)
@@ -434,6 +437,18 @@ dave_top_pct = format(total_tally.loc[total_tally['Dave: Win Pct'] == total_tall
 mat_top_year = total_tally.loc[total_tally['Mat: Win Pct'] == total_tally['Mat: Win Pct'].max(), 'Year'].values[0]
 mat_top_pct = format(total_tally.loc[total_tally['Mat: Win Pct'] == total_tally['Mat: Win Pct'].max(), 'Mat: Win Pct'].values[0],'.3f')
 
+##weekly summary table
+
+df_picks_week12 = df_picks_week1.groupby(['Year','Week','variable'])['Wins'].agg([('Games','size'), ('Win_Total','sum')]).reset_index()
+df_picks_week12['Pct'] = df_picks_week12['Win_Total'].div(df_picks_week12['Games'], axis=0)
+df_picks_week12 = df_picks_week12.rename(columns={'variable': 'Participant', 'Win_Total': 'Wins', 'Pct': 'Win Percentage'})
+df_picks_week12['Year'] = df_picks_week12['Year'].astype('string')
+df_picks_week12['Participant'] = df_picks_week12['Participant'].astype('category')
+df_picks_week12['Participant'] = df_picks_week12['Participant'].cat.rename_categories({'Mat Result': 'Mat', 'Dad Result': 'Dave'})
+
+
+#color palette options
+cm_wins = sns.light_palette("green", as_cmap=True)
 
 ################################################ tabs #####################################################
    
@@ -478,5 +493,8 @@ with tab5:
    st.header("Full History")
    st.write("Below is the full history of picks for each week, dating back to 2011.")
    st.dataframe(df_picks.style, hide_index=True)
+   st.write("And here are the weekly summaries.")
+   st.dataframe(df_picks_week12.style.format({'Wins': "{:.0f}",'Win Percentage': "{:.3f}"}).\
+                background_gradient(cmap=cm_wins,subset=['Wins', 'Win Percentage']),hide_index=True,use_container_width=True)
    st.write("Here's the full history of Over/Unders going back to 2017.")
    st.dataframe(df_ou_full.style, hide_index=True)
