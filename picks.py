@@ -97,9 +97,12 @@ weekly_pct = px.line(df_picks_week3, x="Week", y="Cumulative Win Percentage", co
 filter = df_picks["Mat Pick"] != ""
 df_picks_current1 = pd.DataFrame(df_picks[filter])
 
+
 current_year = max(df_picks_current1.Year)
 df_picks_current2 = pd.DataFrame(df_picks_current1.loc[np.where(df_picks_current1["Year"]==current_year)]).reset_index(drop=True)
+
 current_week = max(df_picks_current2.Week)
+
 df_picks_current = pd.DataFrame(df_picks_current2.loc[np.where(df_picks_current2["Week"]==current_week)]).reset_index(drop=True)
 remaining_count = df_picks_current[df_picks_current["Mat Result"] ==""].shape[0]
 
@@ -498,3 +501,4 @@ with tab5:
                 background_gradient(cmap=cm_wins,subset=['Wins', 'Win Percentage']),hide_index=True,use_container_width=True)
    st.write("Here's the full history of Over/Unders going back to 2017.")
    st.dataframe(df_ou_full.style, hide_index=True)
+
