@@ -166,7 +166,6 @@ df_ou_full['Year'] = df_ou_full['Year'].astype(str)
 filter = df_ou_full["Team_Wins"] != ""
 df_ou = pd.DataFrame(df_ou_full[filter])
 df_ou['Year'] = df_ou['Year'].astype(str)
-df_ou['Result'] = df_ou['Result'].astype(str)
 
 conditions = [
     (df_ou['Result'] == 'P'),
