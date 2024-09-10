@@ -175,6 +175,10 @@ conditions = [
 # create a list of the values we want to assign for each condition
 values = ['Push', 'Win','Loss']
 
+print(df_ou)
+
+'''
+
 # create a new column and use np.select to assign values to it using our lists as arguments
 df_ou['Mat_New'] = np.select(conditions, values)
 
@@ -214,10 +218,6 @@ values = ['Push','Win', 'Loss','Win','Loss']
 
 # create a new column and use np.select to assign values to it using our lists as arguments
 df_ou['Dad_Original'] = np.select(conditions, values)
-
-print(df_ou)
-
-'''
 
 df_ou_tally1 = df_ou
 choices = [1, 0, 0.5]
