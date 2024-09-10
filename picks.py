@@ -175,13 +175,13 @@ conditions = [
 # create a list of the values we want to assign for each condition
 values = ['Push', 'Win','Loss']
 
+# create a new column and use np.select to assign values to it using our lists as arguments
+df_ou['Mat_New'] = np.select(conditions, values)
+
 st.write(df_ou)
 st.write(values)
 
 '''
-
-# create a new column and use np.select to assign values to it using our lists as arguments
-df_ou['Mat_New'] = np.select(conditions, values)
 
 conditions = [
     (df_ou['Original_Result'] == 'P'),
