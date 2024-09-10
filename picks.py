@@ -176,6 +176,7 @@ conditions = [
 values = ['Push', 'Win','Loss']
 
 st.write(df_ou)
+st.write(values)
 
 '''
 
