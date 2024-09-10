@@ -175,7 +175,7 @@ conditions = [
 # create a list of the values we want to assign for each condition
 values = ['Push', 'Win','Loss']
 
-print(df_ou)
+st.write(df_ou)
 
 '''
 
