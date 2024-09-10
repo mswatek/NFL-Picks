@@ -215,6 +215,10 @@ values = ['Push','Win', 'Loss','Win','Loss']
 # create a new column and use np.select to assign values to it using our lists as arguments
 df_ou['Dad_Original'] = np.select(conditions, values)
 
+print(df_ou)
+
+'''
+
 df_ou_tally1 = df_ou
 choices = [1, 0, 0.5]
 conditions = [df_ou_tally1.Mat_New =='Win', df_ou_tally1.Mat_New =='Loss', df_ou_tally1.Mat_New =='Push']
@@ -502,3 +506,4 @@ with tab5:
    st.write("Here's the full history of Over/Unders going back to 2017.")
    st.dataframe(df_ou_full.style, hide_index=True)
 
+'''
