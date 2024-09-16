@@ -191,7 +191,7 @@ conditions = [
 values = ['Push','Win', 'Loss','Win','Loss']
 
 # create a new column and use np.select to assign values to it using our lists as arguments
-df_ou['Mat_Original'] = np.select(conditions, values)
+df_ou['Mat_Original'] = np.select(conditions, values,default='Win')
 
 conditions = [
     (df_ou['Result'] == 'P'),
@@ -202,7 +202,7 @@ conditions = [
 values = ['Push', 'Win','Loss']
 
 # create a new column and use np.select to assign values to it using our lists as arguments
-df_ou['Dad_New'] = np.select(conditions, values)
+df_ou['Dad_New'] = np.select(conditions, values,default='Win')
 
 conditions = [
     (df_ou['Original_Result'] == 'P'),
@@ -215,7 +215,7 @@ conditions = [
 values = ['Push','Win', 'Loss','Win','Loss']
 
 # create a new column and use np.select to assign values to it using our lists as arguments
-df_ou['Dad_Original'] = np.select(conditions, values)
+df_ou['Dad_Original'] = np.select(conditions, values,default='Win')
 
 df_ou_tally1 = df_ou
 choices = [1, 0, 0.5]
