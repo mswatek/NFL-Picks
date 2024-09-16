@@ -167,6 +167,7 @@ filter = df_ou_full["Team_Wins"] != ""
 df_ou = pd.DataFrame(df_ou_full[filter])
 df_ou['Year'] = df_ou['Year'].astype(str)
 
+
 conditions = [
     (df_ou['Result'] == 'P'),
     (df_ou['Result'] == df_ou['Mat']),
@@ -176,11 +177,8 @@ conditions = [
 values = ['Push', 'Win','Loss']
 
 # create a new column and use np.select to assign values to it using our lists as arguments
-df_ou['Mat_New'] = np.select(conditions, values)
+df_ou['Mat_New'] = np.select(conditions, values,default='Win')
 
-st.write(df_ou)
-
-'''
 
 conditions = [
     (df_ou['Original_Result'] == 'P'),
@@ -506,4 +504,3 @@ with tab5:
    st.write("Here's the full history of Over/Unders going back to 2017.")
    st.dataframe(df_ou_full.style, hide_index=True)
 
-'''
