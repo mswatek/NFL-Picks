@@ -1,6 +1,6 @@
-altair
+altair==6.0.0
 pandas
-streamlit
+streamlit==1.30.0
 gspread
 numpy
 IPython
