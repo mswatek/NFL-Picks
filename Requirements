@@ -1,6 +1,6 @@
 altair==4.2.2
-pandas
 streamlit==1.19.0
+pandas
 gspread
 numpy
 IPython
