@@ -4,4 +4,4 @@ pandas
 gspread
 numpy
 IPython
-plotly.express
+plotly
